@@ -48,23 +48,21 @@ public class Solution {
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String grandMotherName = reader.readLine();
-        Cat grandMother = new Cat(grandMotherName);
-
         String grandFatherName = reader.readLine();
-        Cat grandFather = new Cat(grandFatherName);
-
+        String grandMotherName = reader.readLine();
         String fatherName = reader.readLine();
-        Cat father = new Cat(fatherName, grandMother, grandFather);
-
         String motherName = reader.readLine();
-        Cat mother = new Cat(motherName, grandMother, grandFather);
-
-        String daughterName = reader.readLine();
-        Cat daughter = new Cat(daughterName, mother, father);
-
         String sonName = reader.readLine();
-        Cat son = new Cat(sonName, mother, father);
+        String daughterName = reader.readLine();
+
+        Cat grandFather = new Cat(grandFatherName);
+        Cat grandMother = new Cat(grandMotherName);
+        Cat father = Cat.withFather(fatherName, grandFather);
+        Cat mother = Cat.withMother(motherName, grandMother);
+        Cat son = Cat.withParents(sonName, father, mother);
+        Cat daughter = Cat.withParents(daughterName, father, mother);
+
+
 
         System.out.println(grandFather);
         System.out.println(grandMother);
@@ -79,24 +77,34 @@ public class Solution {
         private Cat father;
         private Cat mother;
 
-        Cat(String name) {
+        public Cat(String name) {
             this.name = name;
         }
 
-        Cat(String name, Cat mother, Cat father) {
+        private Cat(String name, Cat father, Cat mother) {
             this.name = name;
             this.father = father;
             this.mother = mother;
         }
 
+        public static Cat withFather(String name, Cat father) {
+            return new Cat(name, father, null);
+        }
+
+        public static Cat withMother(String name, Cat mother) {
+            return new Cat(name, null, mother);
+        }
+
+        public static Cat withParents(String name, Cat father, Cat mother) {
+            return new Cat(name, father, mother);
+        }
+
+
         @Override
         public String toString() {
-            if (mother == null && father == null) {
-                return "The cat's name is " + name + ", no mother, no father.";
-            }
-            else
-                return "The cat's name is " + name + ", mother is " + mother.name + ", father is " + father.name + ".";
+            String motherStr = (mother == null) ? "no mother" : "mother is " + mother.name;
+            String fatherStr = (father == null) ? "no father" : "father is " + father.name;
+            return String.format("The cat's name is %s, %s, %s.", name, motherStr, fatherStr);
         }
     }
-
 }
